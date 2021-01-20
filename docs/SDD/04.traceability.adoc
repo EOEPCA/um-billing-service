@@ -1,0 +1,11 @@
+[[traceabilityMatrix]]
+= User Story Traceability
+
+.User Stories
+|===
+|Code |Description 
+
+|EOEPCA-XXX	
+|<Insert Description>
+
+|===

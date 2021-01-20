@@ -1,0 +1,192 @@
+= Billing Service Interfaces
+
+[abstract]
+.Abstract
+This OpenAPI Document describes the endpoints exposed by Billing Service Building Block deployments.  <br> <br> Using this API will allow to validate billing events and generate billing reports.
+
+
+// markup not found, no include::{specDir}intro.adoc[opts=optional]
+
+
+
+== Endpoints
+
+
+[.BillingChecks]
+=== Billing Checks
+
+
+[.billingCheckPost]
+==== Policy Validation
+    
+`POST /billing/validate`
+
+Billing Event check
+
+===== Description 
+
+This operation validates a received billing event, by contacting the Pricing Engine for specific checks.
+
+
+// markup not found, no include::{specDir}billing/validate/POST/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+<TBD>
+
+
+===== Return Type
+
+<TBD>
+
+
+===== Responses
+
+.http response codes
+[cols="2,3,1"]
+|===         
+| Code | Message | Datatype 
+
+
+| 200
+| OK
+|  <TBD>
+| <TBD>
+| NOK
+|  <TBD>
+
+|===         
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}billing/validate/POST/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}billing/validate/POST/http-response.adoc[opts=optional]
+
+
+// file not found, no * wiremock data link :billing/validate/POST/POST.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}billing/validate/POST/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[.BillingReport]
+=== Billing Report
+
+
+[.billingPost]
+==== Billing POST
+    
+`POST /billing/report`
+
+Generates a billing report based on passed billing identity
+
+===== Description 
+
+This operation takes a passed billing identity value, validates it against the user identity passed in the authentication token, using the OIDC connection to the Login Service, and generates a report of billing events matching the identity.
+
+
+// markup not found, no include::{specDir}policy/GET/spec.adoc[opts=optional]
+
+
+
+===== Parameters
+
+
+====== Header Parameters
+
+[cols="2,3,1"]
+|===         
+|Name| Description| Required
+
+| Authorization 
+| JWT or Bearer Token  
+| - 
+ 
+
+|===         
+
+====== Data Parameters
+
+[cols="2,3,1"]
+|===         
+|Name| Description| Required
+
+| bill_identity 
+| Billing identity
+| Yes 
+ 
+
+|===
+
+
+===== Return Type
+
+array[<<billing events>>]
+
+
+===== Content Type
+
+* application/json
+
+===== Responses
+
+<TBD>       
+
+===== Samples
+
+
+// markup not found, no include::{snippetDir}policy/GET/http-request.adoc[opts=optional]
+
+
+// markup not found, no include::{snippetDir}policy/GET/http-response.adoc[opts=optional]
+
+
+
+// file not found, no * wiremock data link :policy/GET/GET.json[]
+
+
+ifdef::internal-generation[]
+===== Implementation
+
+// markup not found, no include::{specDir}policy/GET/implementation.adoc[opts=optional]
+
+
+endif::internal-generation[]
+
+
+[#models]
+== Models
+
+
+[#BillingEvent]
+=== Billing Event
+
+
+[.fields-NewPolicy]
+[cols="2,1,2,4,1"]
+|===         
+| Field Name| Required| Type| Description| Format
+
+| <TBD> 
+| <TBD> 
+| <TBD>  
+| <TBD>
+|  
+
+|===
+
+
+
+
+
