@@ -122,7 +122,7 @@ This operation takes a passed billing identity value, validates it against the u
 |===         
 |Name| Description| Required
 
-| bill_identity 
+| billing_id 
 | Billing identity
 | Yes 
  
@@ -178,11 +178,17 @@ endif::internal-generation[]
 |===         
 | Field Name| Required| Type| Description| Format
 
+| billing_id 
+| Yes 
+| String  
+| Billing Identity
 | <TBD> 
-| <TBD> 
-| <TBD>  
+
+| resource_list 
+| Yes 
+| Array  
+| Array of resource_ids to validate access
 | <TBD>
-|  
 
 |===
 

@@ -16,6 +16,7 @@ The main functionality of the Billing Service is to serve as an internal platfor
 
 * Billing Event Check Endpoint. An endpoint to allow for the validation of received billing events from either internal or external components.
 * Billing Report Endpoint. An endpoint to allow for the generation of billing reports upon request by a validated billing identity.
+* (Possibility) Billing Identity Generation Endpoint. Depending on business needs, BIS can also implement an endpoint to generate and associate billing identities with user identities.
 * Pricing Check. Internal component to allow the Billing Service to communicate with the Pricing Engine.
 * Billing Event Database. A local persistent database for storing Billing Events, and user and billing identity associations.
 * SCIM Client, allowing to persist and retrieve user attributes necessary for the Billing Service.
@@ -32,6 +33,7 @@ When launched, the BIS will answer to all requests to 2 specific paths:
 
 . Billing Check (/validate): To perform billing event's checks, using POST operations. Available to both internal and external components
 . Billing Report (/report): To generate requested billing reports, using POST operations. Available to both internal and external components
+. (possibility) Billing Identity Generation (/identity): To generate a billing identity, and associate with a user identity, using POST operations. Available to internal components.
 
 The requests should be accompained by an "Authorization: Bearer <valid_RPT>" for all endpoints.
 
@@ -44,6 +46,8 @@ The requests should be accompained by an "Authorization: Bearer <valid_RPT>" for
 | RPT/OAuth token and Valid data | bis.domain.com/validate with a billing event | Validates the contained billing event | Return a OK/NOK response
 | No RPT/OAuth token | bis.domain.com/report with a billing identity | None (no auth token) | 403
 | RPT/OAuth token | bis.domain.com/report with a billing identity | Validates the billing identity against auth token and generates report | Return either report or a 403 response
+| No RPT/OAuth token | bis.domain.com/identity | None (no auth token) | 500
+| RPT/OAuth token | bis.domain.com/identity | Generates billing identity and associates against auth token user identity | Return either OK or a 403 response
 
 |===
 
@@ -54,13 +58,21 @@ The requests should be accompained by an "Authorization: Bearer <valid_RPT>" for
 
 ==== Billing Check (from internal or external PDPs and other components)
 
-The BIS exposes a billing event check endpoint, which accepts a billing event as data and checks for validity.
+The BIS exposes a billing event check endpoint, which accepts a billing event as data and checks for validity. This validity is performed by calling the Pricing Engine to ascertain resource access status.
 
-The BIS also persists billing events for usage on its internal database
+The BIS also persists billing events for usage on its internal database.
 
 ==== Billing Report (from other components)
 
 The BIS generates a billing report, accepting as input a billing identity and checking for validity against a user profile.
+
+This validity is performed by querying the Login Service with the OIDC connector, to ascertain if the billing identity and user identity are a match, before issuing the report.
+
+==== (possibility) Billing Identity Generation (from internal components)
+
+A possible interface to generate a billing identity, and associate it with the passed user identity in the authentication token
+
+One possible implementation is to have the association step done via OIDC with the Login Service, to comply with data privacy laws, instead of a local database.
 
 === Consumed Interfaces
 
@@ -154,15 +166,27 @@ This section contains:
 
 === Billing Event Check Use Case
 
-image::../images/use_case.png[top=5%, align=center]
+image::../images/check_use_case.png[top=5%, align=center]
 
-When the BIS receives a request on the Billing Event Check endpoint, we proceed to validate it, by passing data to the Pricing Engine for checks. Upon positive response from the Pricing Engine, we store the Billing Event on the local database, for future reporting, and reply to the request. If the Pricing Engine denies a check, the BIS denies the Event check.
+When the BIS receives a request on the Billing Event Check endpoint, we proceed to validate it, by passing data to the Pricing Engine for checks. This data consists of the billing identity and the list of resources being accessed.
+
+Upon positive response from the Pricing Engine, we store the Billing Event on the local database, for future reporting, and reply to the request.
+
+If the Pricing Engine denies a check, the BIS denies the Event check.
 
 
 === Billing Report generation
+
+image::../images/report_use_case.png[top=5%, align=center]
 
 When the BIS receives a request on the Billing Report endpoint, we proceed to check the received billing identity, present in the data parameter, against the user identity contained in the passed authentication token, in the header, by using the OIDC endpoint of the Login Service.
 
 If validation is successful, the BIS then proceeds to query the local database for billing events that match the billing identity, and replies with an array in json format, containing the matching events.
 
 If validation is unsucessful, the BIS denies the request.
+
+=== (possibility) Billing Identity generation
+
+The BIS uses billing identities to validate billing report generation. One possibility is to have a specific endpoint on the BIS for generation of these ids, and association between these and user identities.
+
+One possible implementation is, after generation of an id, having the BIS contact the Login Service using the OIDC connector, to add the id to a custom user attribute, specified at the Login Service level. This implementation has the bonus of being able to associate several billing identities per user identity.
