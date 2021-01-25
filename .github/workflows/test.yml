@@ -10,7 +10,6 @@ on:
       - master
       - develop
       - 'release/**'
-      - 'feature/EOEPCA-259'
   pull_request:
     branches:
       - master
