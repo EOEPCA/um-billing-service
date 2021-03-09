@@ -45,12 +45,12 @@ jobs:
           pytest ./tests
       ## Automated creation and publishing disabled for now
 #      - name: Container Creation and Publishing
-#        run: ./travis/containerCreation.sh um-billing-service
+#        run: ./gh_actions/containerCreation.sh um-billing-service
 #      - name: Smoke and Acceptance Test
-#        run: ./travis/acceptanceTest.sh um-billing-service 8080 7000
+#        run: ./gh_actions/acceptanceTest.sh um-billing-service 8080 7000
 #      - name: Release Container
 #        if: github.ref == 'refs/heads/master' && github.event != 'pull_request'
-#        run: ./travis/release.sh um-billing-service
+#        run: ./gh_actions/release.sh um-billing-service
         
       
         
